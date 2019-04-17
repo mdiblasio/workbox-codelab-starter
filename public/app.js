@@ -4,7 +4,7 @@ const WIKI_IMAGES_CACHE = 'wiki-images';
 
 const SECTIONS = {
   home: {
-    pathname: '/home',
+    pathname: '/',
     name: 'home',
     id: 'section--home'
   },
