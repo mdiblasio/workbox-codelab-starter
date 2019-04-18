@@ -1,5 +1,5 @@
 const log = console.log;
-const WIKI_API_CACHE = 'wiki-articles';
+const WIKI_API_CACHE = 'wiki-api';
 const WIKI_IMAGES_CACHE = 'wiki-images';
 
 const SECTIONS = {
@@ -52,9 +52,10 @@ function displaySection(displaySection, path = null) {
       tab.classList.remove('active');
   });
 
+  // TODO: uncomment later in codelab
   // push pathname to window.history to change URL
-  if (displaySection.name != SECTIONS.loader.name)
-    window.history.pushState({}, null, path || displaySection.pathname);
+  // if (displaySection.name != SECTIONS.loader.name)
+  //   window.history.pushState({}, null, path || displaySection.pathname);
 }
 
 // display section based on tab selected
@@ -82,51 +83,22 @@ document.getElementById('search-btn').addEventListener('click', toggleSearchBar)
 const articleHistoryContainer = document.getElementById('articleHistoryContainer');
 
 function createArticleThumbnail(title) {
-  let thumbnail = document.createElement('div');
-  thumbnail.classList = "thumbnail";
-  
-  let spanTitleElm = document.createElement('span');
-  spanTitleElm.classList = "thumbnail--articlename";
-  spanTitleElm.innerText = title.replace(/_/g, " ");
-  spanTitleElm.onclick = () => {
+  let elm = document.createElement('div');
+  elm.classList = "thumbnail";
+  elm.onclick = () => {
     fetchWikiPage(title);
   };
-
-  let trashIconBtn = document.createElement('button');
-  trashIconBtn.classList = "trash-icon";
-  trashIconBtn.onclick = () => {
-    deleteCachedEntry(title);
-  };
-
-  thumbnail.appendChild(spanTitleElm);
-  thumbnail.appendChild(trashIconBtn);
-  return thumbnail;
-}
-
-// TODO: implement
-async function deleteCachedEntry(title) {
-  const cache = await caches.open('wiki-articles');
-  await cache.delete(`/api/wiki/${title}`);
-  queryWikiCache();
+  // replace underscores with spaces for diplaying titles
+  elm.innerText = title.replace(/_/g, " ");
+  return elm;
 }
 
 // query cache and populate cached articles list
 async function queryWikiCache() {
-  articleHistoryContainer.innerHTML = '';
-  const wikiCache = await window.caches.open(WIKI_API_CACHE);
+  articleHistoryContainer.innerHTML = `<p><i>No articles cached</i></p>`;
+  
+  // TODO: add logic to query articles cache and display cached articles
 
-  wikiCache.keys().then(keys => {
-    if (keys.length > 0) {
-      keys.forEach(key => {
-        let title = key.url.toString().match(/api\/wiki\/(.*)/)[1];
-        articleHistoryContainer.appendChild(createArticleThumbnail(title));
-      });
-    } else {
-      articleHistoryContainer.innerHTML = `<p><i>No articles cached</i></p>`;
-    }
-  });
-
-  estimateStorage();
 }
 
 queryWikiCache();
@@ -165,15 +137,12 @@ function clearCache() {
 document.getElementById('clearCacheBtn').addEventListener('click', clearCache);
 
 // override links to call fetchWikiPage(..)
-const wikiRegExp = new RegExp("\/wiki\/(.*)");
 document.onclick = function(e) {
   e = e || window.event;
   var element = e.target || e.srcElement;
 
-  // if (element.tagName == 'A' && e.srcElement.href.match(/wiki\/(.*)/)) {
-  if (element.tagName == 'A' && wikiRegExp.test(e.srcElement.href)) {
-    // let searchTerm = e.srcElement.href.match(/wiki\/(.*)/)[1];
-    let searchTerm = wikiRegExp.exec(e.srcElement.href)[1];
+  if (element.tagName == 'A' && e.srcElement.href.match(/wiki\/(.*)/)) {
+    let searchTerm = e.srcElement.href.match(/wiki\/(.*)/)[1];
     fetchWikiPage(searchTerm);
     return false;
   }
@@ -223,7 +192,6 @@ function initialLoad() {
     switch (pathname) {
       case '/':
       case '/home':
-      case '/index':
         section = SECTIONS.home;
         break;
       case '/cached':
