@@ -1,5 +1,5 @@
 const log = console.log;
-const WIKI_API_CACHE = 'wiki-api';
+const WIKI_API_CACHE = 'wiki-articles';
 const WIKI_IMAGES_CACHE = 'wiki-images';
 
 const SECTIONS = {
@@ -52,10 +52,9 @@ function displaySection(displaySection, path = null) {
       tab.classList.remove('active');
   });
 
-  // TODO: uncomment later in codelab
   // push pathname to window.history to change URL
-  // if (displaySection.name != SECTIONS.loader.name)
-  //   window.history.pushState({}, null, path || displaySection.pathname);
+  if (displaySection.name != SECTIONS.loader.name)
+    window.history.pushState({}, null, path || displaySection.pathname);
 }
 
 // display section based on tab selected
@@ -83,22 +82,35 @@ document.getElementById('search-btn').addEventListener('click', toggleSearchBar)
 const articleHistoryContainer = document.getElementById('articleHistoryContainer');
 
 function createArticleThumbnail(title) {
-  let elm = document.createElement('div');
-  elm.classList = "thumbnail";
-  elm.onclick = () => {
+  let thumbnail = document.createElement('div');
+  thumbnail.classList = "thumbnail";
+  
+  let spanTitleElm = document.createElement('span');
+  spanTitleElm.classList = "thumbnail--articlename";
+  spanTitleElm.innerText = title.replace(/_/g, " ");
+  spanTitleElm.onclick = () => {
     fetchWikiPage(title);
   };
-  // replace underscores with spaces for diplaying titles
-  elm.innerText = title.replace(/_/g, " ");
-  return elm;
+
+  let trashIconBtn = document.createElement('button');
+  trashIconBtn.classList = "trash-icon";
+  trashIconBtn.onclick = () => {
+    deleteCachedEntry(title);
+  };
+
+  thumbnail.appendChild(spanTitleElm);
+  thumbnail.appendChild(trashIconBtn);
+  return thumbnail;
 }
 
-// query cache and populate cached articles list
-async function queryWikiCache() {
-  articleHistoryContainer.innerHTML = `<p><i>No articles cached</i></p>`;
-  
-  // TODO: add logic to query articles cache and display cached articles
+// TODO: implement logic to delete an article from the cache
+async function deleteCachedEntry(title) {
+  // ... 
+}
 
+// TODO: add logic to query articles cache and display cached articles
+async function queryWikiCache() {
+  // ... 
 }
 
 queryWikiCache();
@@ -137,12 +149,13 @@ function clearCache() {
 document.getElementById('clearCacheBtn').addEventListener('click', clearCache);
 
 // override links to call fetchWikiPage(..)
+const wikiRegExp = new RegExp("\/wiki\/(.*)");
 document.onclick = function(e) {
   e = e || window.event;
   var element = e.target || e.srcElement;
 
-  if (element.tagName == 'A' && e.srcElement.href.match(/wiki\/(.*)/)) {
-    let searchTerm = e.srcElement.href.match(/wiki\/(.*)/)[1];
+  if (element.tagName == 'A' && wikiRegExp.test(e.srcElement.href)) {
+    let searchTerm = wikiRegExp.exec(e.srcElement.href)[1];
     fetchWikiPage(searchTerm);
     return false;
   }
@@ -165,15 +178,9 @@ window.addEventListener('offline', updateOnlineStatus);
 
 updateOnlineStatus();
 
-// display storage information to user
+// TODO: display storage information to user
 function estimateStorage() {
-  if ('storage' in navigator && 'estimate' in navigator.storage) {
-    navigator.storage.estimate().then(({ usage, quota }) => {
-      document.getElementById('storageUsed').innerText = usage;
-      document.getElementById('storageAvailable').innerText = quota;
-      document.getElementById('storageUsage').innerText = `${Math.floor(usage / quota * 100)}%`;
-    });
-  }
+  // ... 
 }
 
 estimateStorage();
@@ -192,6 +199,7 @@ function initialLoad() {
     switch (pathname) {
       case '/':
       case '/home':
+      case '/index':
         section = SECTIONS.home;
         break;
       case '/cached':

@@ -4,14 +4,9 @@ const VIEW_BASE = 'https://en.m.wikipedia.org/wiki/';
 
 const app = express();
 
-// index route
-app.get('/', function(request, response) {
-  response.sendFile(__dirname + `/public/index.html`);
-});
-
 // route for service worker
-app.get(/sw\.js/, function(request, response) {
-  response.sendFile(__dirname + `/src/sw.js`);
+app.get(/service-worker\.js/, function(request, response) {
+  response.sendFile(__dirname + `/src/service-worker.js`);
 });
 
 // route for wiki API requests
@@ -33,6 +28,12 @@ app.get('/api/wiki/:pageTitle', async (req, res, next) => {
 });
 
 app.use(express.static('public'));
+
+// return index file to all other navigation requests
+app.get(/.*/, function(request, response) {
+  if (request.get('Referrer') === undefined)
+    response.sendFile(__dirname + `/public/index.html`);
+});
 
 const listener = app.listen(process.env.PORT, function() {
   console.log('Your server is running on port ' + listener.address().port);
