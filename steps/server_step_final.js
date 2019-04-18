@@ -29,7 +29,7 @@ app.get('/api/wiki/:pageTitle', async (req, res, next) => {
 
 app.use(express.static('public'));
 
-// return index file to all navigation requests
+// return index file to all other navigation requests
 app.get(/.*/, function(request, response) {
   if (request.get('Referrer') === undefined)
     response.sendFile(__dirname + `/public/index.html`);
