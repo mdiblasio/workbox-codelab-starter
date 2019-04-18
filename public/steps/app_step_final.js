@@ -103,7 +103,7 @@ function createArticleThumbnail(title) {
   return thumbnail;
 }
 
-// TODO: implement
+// delete article from cache
 async function deleteCachedEntry(title) {
   const cache = await caches.open('wiki-articles');
   await cache.delete(`/api/wiki/${title}`);
@@ -223,7 +223,7 @@ function initialLoad() {
     switch (pathname) {
       case '/':
       case '/home':
-      case '/index':
+      case '/index.html':
         section = SECTIONS.home;
         break;
       case '/cached':

@@ -52,6 +52,7 @@ function displaySection(displaySection, path = null) {
       tab.classList.remove('active');
   });
 
+  // TODO: uncomment later in codelab
   // push pathname to window.history to change URL
   if (displaySection.name != SECTIONS.loader.name)
     window.history.pushState({}, null, path || displaySection.pathname);
@@ -103,30 +104,14 @@ function createArticleThumbnail(title) {
   return thumbnail;
 }
 
-// TODO: implement
+// TODO: implement logic to delete an article from the cache
 async function deleteCachedEntry(title) {
-  const cache = await caches.open('wiki-articles');
-  await cache.delete(`/api/wiki/${title}`);
-  queryWikiCache();
+  // ... 
 }
 
-// query cache and populate cached articles list
+// TODO: add logic to query articles cache and display cached articles
 async function queryWikiCache() {
-  articleHistoryContainer.innerHTML = '';
-  const wikiCache = await window.caches.open(WIKI_API_CACHE);
-
-  wikiCache.keys().then(keys => {
-    if (keys.length > 0) {
-      keys.forEach(key => {
-        let title = key.url.toString().match(/api\/wiki\/(.*)/)[1];
-        articleHistoryContainer.appendChild(createArticleThumbnail(title));
-      });
-    } else {
-      articleHistoryContainer.innerHTML = `<p><i>No articles cached</i></p>`;
-    }
-  });
-
-  estimateStorage();
+  // ... 
 }
 
 queryWikiCache();
@@ -197,14 +182,9 @@ window.addEventListener('offline', updateOnlineStatus);
 updateOnlineStatus();
 
 // display storage information to user
+// TODO: write function
 function estimateStorage() {
-  if ('storage' in navigator && 'estimate' in navigator.storage) {
-    navigator.storage.estimate().then(({ usage, quota }) => {
-      document.getElementById('storageUsed').innerText = usage;
-      document.getElementById('storageAvailable').innerText = quota;
-      document.getElementById('storageUsage').innerText = `${Math.floor(usage / quota * 100)}%`;
-    });
-  }
+
 }
 
 estimateStorage();
