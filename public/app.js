@@ -21,7 +21,7 @@ const SECTIONS = {
   main: {
     pathname: '/main',
     name: 'main',
-    id: 'section--main'
+    id: 'section--article'
   },
   loader: {
     pathname: '/',
@@ -125,7 +125,7 @@ async function fetchWikiPage(title) {
   displaySection(SECTIONS.main, `/article/${title}`);
 
   document.getElementById('content').scrollTo(0, 0);
-  document.getElementById('section--main').innerHTML = html;
+  document.getElementById('section--article').innerHTML = html;
 
   queryWikiCache();
 }
