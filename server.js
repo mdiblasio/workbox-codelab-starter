@@ -23,7 +23,7 @@ app.get('/api/wiki/:pageTitle', async(req, res, next) => {
   let responseText = await response.json();
   let responseArticle = responseText.parse.text['*'];
 
-  // rewrite src links 
+  // rewrite relative links
   responseArticle = responseArticle.replace(/src="\/\//g, 'src="https://');
   // add crossorigin attribute so SW can handle requests
   responseArticle = responseArticle.replace(/<img /g, '<img crossorigin="anonymous" ');
