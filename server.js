@@ -1,6 +1,6 @@
 const express = require('express');
 const fetch = require('node-fetch');
-const VIEW_BASE = 'https://en.m.wikipedia.org/wiki/';
+const API_BASE = "https://en.wikipedia.org/w/api.php";
 
 const app = express();
 
@@ -10,21 +10,25 @@ app.get(/service-worker\.js/, function(request, response) {
 });
 
 // route for wiki API requests
-app.get('/api/wiki/:pageTitle', async (req, res, next) => {
+app.get('/api/wiki/:pageTitle', async(req, res, next) => {
   const pageTitle = req.params.pageTitle;
 
-  const requestURL = new URL(VIEW_BASE + pageTitle);
-  requestURL.searchParams.set('action', 'render');
+  const requestURL = new URL(API_BASE);
+  requestURL.searchParams.set('action', 'parse');
+  requestURL.searchParams.set('format', 'json');
+  requestURL.searchParams.set('page', pageTitle);
+  requestURL.searchParams.set('origin', '*');
 
   let response = await fetch(requestURL);
-  let responseText = await response.text();
+  let responseText = await response.json();
+  let responseArticle = responseText.parse.text['*'];
 
   // rewrite src links 
-  responseText = responseText.replace(/src="\/\//g, 'src="https://');
+  responseArticle = responseArticle.replace(/src="\/\//g, 'src="https://');
   // add crossorigin attribute so SW can handle requests
-  responseText = responseText.replace(/<img /g, '<img crossorigin="anonymous" ');
+  responseArticle = responseArticle.replace(/<img /g, '<img crossorigin="anonymous" ');
 
-  res.send(responseText);
+  res.send(responseArticle);
 });
 
 app.use(express.static('public'));
