@@ -84,7 +84,7 @@ const articleHistoryContainer = document.getElementById('articleHistoryContainer
 function createArticleThumbnail(title) {
   let thumbnail = document.createElement('div');
   thumbnail.classList = "thumbnail";
-  
+
   let spanTitleElm = document.createElement('span');
   spanTitleElm.classList = "thumbnail--articlename";
   spanTitleElm.innerText = title.replace(/_/g, " ");
@@ -115,8 +115,13 @@ async function queryWikiCache() {
 
 queryWikiCache();
 
+// display articles in shadown DOM
+var shadow = document.getElementById('section--article').attachShadow({ mode: 'open' });
+
 // fetch Wiki page by title
 async function fetchWikiPage(title) {
+  title = decodeURI(title);
+  console.log(`fetchWikiPage(${title})`);
   displaySection(SECTIONS.loader);
 
   const response = await fetch(encodeURI(`/api/wiki/${title}`));
@@ -124,8 +129,10 @@ async function fetchWikiPage(title) {
 
   displaySection(SECTIONS.main, `/article/${title}`);
 
-  document.getElementById('content').scrollTo(0, 0);
-  document.getElementById('section--article').innerHTML = html;
+  document.getElementById('section--article').scrollTo(0, 0);
+  shadow.host.scrollTo(0, 0);
+
+  shadow.innerHTML = html;
 
   queryWikiCache();
 }
@@ -139,25 +146,22 @@ document.getElementById('searchForm').addEventListener('submit', (e) => {
   fetchWikiPage(searchVal);
 });
 
-// clear cached articles
-function clearCache() {
-  caches.delete(WIKI_API_CACHE);
-  caches.delete(WIKI_IMAGES_CACHE);
-  queryWikiCache();
-}
+// override Wiki link clicks
+const wikiRegExp = new RegExp("\/article\/(.*)");
 
-document.getElementById('clearCacheBtn').addEventListener('click', clearCache);
-
-// override links to call fetchWikiPage(..)
-const wikiRegExp = new RegExp("\/wiki\/(.*)");
+// override clicks to wiki articles
 document.onclick = function(e) {
-  e = e || window.event;
-  var element = e.target || e.srcElement;
-
-  if (element.tagName == 'A' && wikiRegExp.test(e.srcElement.href)) {
-    let searchTerm = wikiRegExp.exec(e.srcElement.href)[1];
-    fetchWikiPage(searchTerm);
-    return false;
+  // if click is from shadow root
+  if (e.srcElement.shadowRoot &&
+    e.srcElement.shadowRoot.activeElement &&
+    e.srcElement.shadowRoot.activeElement.tagName == 'A') {
+    // if link is to another Wiki article, call fetchWikiPage(..)
+    if (wikiRegExp.test(e.srcElement.shadowRoot.activeElement.href)) {
+      e.srcElement.shadowRoot.activeElement.scrollIntoView({ alignToTop: true });
+      let searchTerm = wikiRegExp.exec(e.srcElement.shadowRoot.activeElement.href)[1];
+      fetchWikiPage(searchTerm);
+      return false;
+    }
   }
 };
 
@@ -178,9 +182,15 @@ window.addEventListener('offline', updateOnlineStatus);
 
 updateOnlineStatus();
 
-// TODO: display storage information to user
+// display storage information to user
 function estimateStorage() {
-  // ... 
+  if ('storage' in navigator && 'estimate' in navigator.storage) {
+    navigator.storage.estimate().then(({ usage, quota }) => {
+      document.getElementById('bytesUsed').innerText = usage;
+      document.getElementById('bytesAvailable').innerText = quota;
+      document.getElementById('storageUsage').innerText = `${Math.floor(usage / quota * 100)}%`;
+    });
+  }
 }
 
 estimateStorage();

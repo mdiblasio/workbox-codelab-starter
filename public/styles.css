@@ -17,9 +17,9 @@ body {
   line-height: 1.4;
   max-width: 100%;
   margin: 0px;
-  height: 100vh;
+  /*height: 100vh;*/
   box-sizing: border-box;
-  overflow-y: hidden;
+  /*   overflow-y: hidden; */
 }
 
 header {
@@ -29,8 +29,9 @@ header {
   height: calc(var(--header-row1-height) + var(--header-row2-height));
   box-sizing: border-box;
   align-items: center;
-  position: sticky;
-  padding: 0 var(--standard-margin);
+  /*position: sticky;*/
+  /*padding: 0 var(--standard-margin);*/
+  width: 100%;
 }
 
 .header--row1 {
@@ -38,6 +39,7 @@ header {
   background-color: var(--primary-color);
   font-size: 1.3em;
   top: 0px;
+  padding: var(--padding-main);
 }
 
 .header--row1.offline {
@@ -48,7 +50,10 @@ header {
   background-color: var(--secondary-color);
   height: var(--header-row2-height);
   justify-content: space-between;
-  top: var(--header-row2-height);
+  /*   top: var(--header-row2-height); */
+  position: sticky;
+  position: -webkit-sticky;
+  top: 0;
 }
 
 .header--row2.offline {
@@ -175,12 +180,13 @@ input.search {
 
 main {
   background-color: #d8d8d830;
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
   box-sizing: border-box;
   width: 100%;
   padding: 1.5em;
-  height: calc(100vh - var(--header-row1-height) - var(--header-row2-height));
-  overflow-y: scroll;
+  /* height: calc(100vh - var(--header-row1-height) - var(--header-row2-height)); */
+  /* overflow-y: scroll; */
+  min-height: calc(100vh - var(--header-row1-height) - var(--header-row2-height));
 }
 
 .section {
