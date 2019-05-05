@@ -52,3 +52,15 @@ workbox.routing.registerRoute(
     ]
   })
 );
+
+// This "catch" handler is triggered when any of the other routes fail to
+// generate a response. The handler is used to return the offline partial page
+// in response to Wikimedia REST API requests if the Wikimedia REST API route
+// above fails (i.e., cannot reach the network).
+workbox.routing.setCatchHandler(({ event }) => {
+  if (event.request.url.match(/api\/wiki/)) {
+    const key = workbox.precaching.getCacheKeyForURL('offline.partial.html');
+    return caches.match(key);
+  }
+  return Response.error();
+});
