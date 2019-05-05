@@ -103,14 +103,14 @@ function createArticleThumbnail(title) {
   return thumbnail;
 }
 
-// TODO: implement logic to delete an article from the cache
+// delete a cached entry
 async function deleteCachedEntry(title) {
-  // ... 
+  // TODO: implement logic to delete an article from the cache
 }
 
-// TODO: add logic to query articles cache and display cached articles
+// query cache and populate cached articles list
 async function queryWikiCache() {
-  // ... 
+  // TODO: add logic to query articles cache and display cached articles
 }
 
 queryWikiCache();
@@ -184,13 +184,7 @@ updateOnlineStatus();
 
 // display storage information to user
 function estimateStorage() {
-  if ('storage' in navigator && 'estimate' in navigator.storage) {
-    navigator.storage.estimate().then(({ usage, quota }) => {
-      document.getElementById('bytesUsed').innerText = usage;
-      document.getElementById('bytesAvailable').innerText = quota;
-      document.getElementById('storageUsage').innerText = `${Math.floor(usage / quota * 100)}%`;
-    });
-  }
+  // TODO: display storage information to user
 }
 
 estimateStorage();
