@@ -196,13 +196,7 @@ updateOnlineStatus();
 
 // display storage information to user
 function estimateStorage() {
-  if ('storage' in navigator && 'estimate' in navigator.storage) {
-    navigator.storage.estimate().then(({ usage, quota }) => {
-      document.getElementById('bytesUsed').innerText = usage;
-      document.getElementById('bytesAvailable').innerText = quota;
-      document.getElementById('storageUsage').innerText = `${Math.floor(usage / quota * 100)}%`;
-    });
-  }
+  // TODO: display storage information to user
 }
 
 estimateStorage();
