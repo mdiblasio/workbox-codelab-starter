@@ -1,16 +1,31 @@
 {
-  "name": "workbox-codelab",
+  "name": "reliable-codelab",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
+  "main": "index.js",
+  "watch": {
+    "injectman": {
+      "extensions": "js,css,html",
+      "patterns": [
+        "src",
+        "public"
+      ]
+    }
   },
-  "author": "",
+  "scripts": { // TODO: update
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "workbox injectManifest && node server.js",
+    "rmsw": "rm dist/sw.js",
+    "injectman": "workbox injectManifest",
+    "local2": " npm-watch && PORT=8887 node server.js",
+    "local": "PORT=8887 node server.js"
+  },
+  "author": "mdiblasio",
   "license": "ISC",
   "dependencies": {
     "express": "^4.16.4",
     "node-fetch": "^2.3.0",
+    "npm-watch": "^0.6.0",
     "path": "^0.12.7",
     "workbox-cli": "^4.1.1"
   },
