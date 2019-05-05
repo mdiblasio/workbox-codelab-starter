@@ -24,3 +24,9 @@ self.addEventListener('activate', (event) => {
 // on the configuration options in workbox-config.js. The rest of the code in your 
 // source service worker is left untouched.
 workbox.precaching.precacheAndRoute([]);
+
+// navigation route will return the app shell 'index.html' to all
+// navigation requests
+workbox.routing.registerNavigationRoute(
+  workbox.precaching.getCacheKeyForURL('/index.html')
+);
