@@ -17,3 +17,10 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   console.log('SW activate event');
 });
+
+// When workbox injectManifest is run, it looks for this specific string in your 
+// source service worker file. It replaces the empty array with a list of URLs to 
+// precache and writes the service worker file to its destination location, based 
+// on the configuration options in workbox-config.js. The rest of the code in your 
+// source service worker is left untouched.
+workbox.precaching.precacheAndRoute([]);

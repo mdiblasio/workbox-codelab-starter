@@ -139,15 +139,6 @@ document.getElementById('searchForm').addEventListener('submit', (e) => {
   fetchWikiPage(searchVal);
 });
 
-// clear cached articles
-function clearCache() {
-  caches.delete(WIKI_API_CACHE);
-  caches.delete(WIKI_IMAGES_CACHE);
-  queryWikiCache();
-}
-
-document.getElementById('clearCacheBtn').addEventListener('click', clearCache);
-
 // override links to call fetchWikiPage(..)
 const wikiRegExp = new RegExp("\/wiki\/(.*)");
 document.onclick = function(e) {
