@@ -30,3 +30,25 @@ workbox.precaching.precacheAndRoute([]);
 workbox.routing.registerNavigationRoute(
   workbox.precaching.getCacheKeyForURL('/index.html')
 );
+
+// cache Wikimedia REST API calls
+workbox.routing.registerRoute(
+  new RegExp("\/api\/wiki"),
+  new workbox.strategies.StaleWhileRevalidate({
+    cacheName: 'wiki-articles'
+  })
+);
+
+// cache Wikipedia article image assets
+workbox.routing.registerRoute(
+  new RegExp("https?:\/\/upload\.wikimedia\.org\/wikipedia\/.*\.(png|jpg|svg|jpeg)$", "i"),
+  new workbox.strategies.CacheFirst({
+    cacheName: 'wiki-images',
+    plugins: [
+      new workbox.expiration.Plugin({
+        maxEntries: 500, // max 500 images
+        maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+      })
+    ]
+  })
+);
