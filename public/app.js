@@ -103,9 +103,11 @@ function createArticleThumbnail(title) {
   return thumbnail;
 }
 
-// TODO: implement logic to delete an article from the cache
+// delete a cached entry
 async function deleteCachedEntry(title) {
-  // ... 
+  const cache = await caches.open('wiki-articles');
+  await cache.delete(`/api/wiki/${title}`);
+  queryWikiCache();
 }
 
 // query cache and populate cached articles list
