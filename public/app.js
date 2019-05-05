@@ -108,9 +108,21 @@ async function deleteCachedEntry(title) {
   // ... 
 }
 
-// TODO: add logic to query articles cache and display cached articles
+// query cache and populate cached articles list
 async function queryWikiCache() {
-  // ... 
+  articleHistoryContainer.innerHTML = '';
+  const wikiCache = await window.caches.open(WIKI_API_CACHE);
+
+  wikiCache.keys().then(keys => {
+    if (keys.length > 0) {
+      keys.forEach(key => {
+        let title = key.url.toString().match(/api\/wiki\/(.*)/)[1];
+        articleHistoryContainer.appendChild(createArticleThumbnail(title));
+      });
+    } else {
+      articleHistoryContainer.innerHTML = `<p><i>No articles cached</i></p>`;
+    }
+  });
 }
 
 queryWikiCache();
